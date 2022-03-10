@@ -1,0 +1,12 @@
+{
+	"ContactListName": "CTA",
+	"Description": "Users who have submitted the CTA on fluente.me and confirmed their interest.",
+	"Topics": [
+		{
+			"TopicName": "Fun",
+			"DisplayName": "Have fun learning English",
+			"Description": "Apps, podcasts, games, instagram profiles and others that can help you learn while having fun.",
+			"DefaultSubscriptionStatus": "OPT_IN"
+		}
+	]
+}

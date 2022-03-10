@@ -1,0 +1,12 @@
+{
+    "ContactListName": "CTA",
+    "EmailAddress": "felipe@fluente.me",
+    "UnsubscribeAll": false,
+    "TopicPreferences": [
+        {
+            "TopicName": "Fun",
+            "SubscriptionStatus": "OPT_IN"
+        }
+    ],
+    "AttributesData": "{\"name\": \"Felipe\", \"token\": \"000\"}"
+}
