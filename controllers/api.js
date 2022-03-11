@@ -29,6 +29,16 @@ exports.checkEmail = {
 	}
 }
 
+exports.teste = {
+	cors: {
+		origin: ["*"]
+	},
+
+	handler: (request, h) => {
+		return "NOWO Mail Server";
+	}
+}
+
 exports.sendEmail = {
 	cors: {
 		origin: ['*']
