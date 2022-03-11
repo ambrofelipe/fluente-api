@@ -8,7 +8,7 @@ const Routes = require('./routes');
 
 // SERVER SETTINGS
 const server = Hapi.server({
-	port: 8000,
+	port: 8003,
 	host: 'localhost',
 	routes: {
 		cors: {
