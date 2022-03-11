@@ -35,7 +35,7 @@ exports.teste = {
 	},
 
 	handler: (request, h) => {
-		return "NOWO Mail Server";
+		return "API Fluente";
 	}
 }
 
@@ -88,6 +88,8 @@ const verifyEmail = async (email) => {
 		"x-rapidapi-host": process.env.CHECKEMAIL_URL,
 		"x-rapidapi-key": process.env.CHECKEMAIL_KEY
 	}
+
+	console.log("Teste verifyEmail");
 
 	return new Promise(resolve => {
 
