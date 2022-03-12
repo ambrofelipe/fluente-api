@@ -91,7 +91,7 @@ const verifyEmail = async (email) => {
 
 	console.log("Teste verifyEmail");
 
-	return new Promise(resolve => {
+	const promise = new Promise(resolve => {
 
 		axios
 			.get('https://' + process.env.CHECKEMAIL_URL + '?domain=' + email, { headers: checkEmailHeaders })
@@ -102,7 +102,12 @@ const verifyEmail = async (email) => {
 			.catch(error => {
 				console.error(error)
 			});
+	})
+	.catch(error => {
+		console.log(error);
 	});
+
+	return promise;
 }
 
 const sendEmail = async (name, email) => {

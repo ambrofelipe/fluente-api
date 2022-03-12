@@ -12,7 +12,7 @@ const server = Hapi.server({
 	host: 'localhost',
 	routes: {
 		cors: {
-			origin: ['fluente.me', 'fluente.local'],
+			origin: ['*'],
 			credentials: true
 		},
 		state: {
