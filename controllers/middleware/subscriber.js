@@ -1,6 +1,7 @@
 "use strict";
 
 const axios = require("axios");
+const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require("uuid");
 const db = require("../helpers/database");
 
@@ -11,21 +12,18 @@ module.exports = {
 		/**
 		 * Check SES List for email address
 		 */
-		
+
 		const sesEndpoint = "email.us-east-1.amazonaws.com";
-		const contactListName = "Fun";
+		const contactListName = "CTA";
 
-		return new Promise(resolve => {
+		AWS.config.update({region: "us-east-1"});
 
-			axios
-				.get(`${sesEndpoint}/v2/email/contact-lists/${contactListName}/contacts/${email}`)
-				.then(res => {
-					console.log(`statusCode: ${res}`);
-					resolve(res);
-				})
-				.catch(error => {
-					console.error(error)
-				});
+		const sesv2 = new AWS.SESV2();
+		const params = {};
+
+		sesv2.getAccount(params, (err, data) => {
+			if(err) console.error(err, err.stack);
+			else    console.log(data);
 		});
 
 

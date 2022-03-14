@@ -45,16 +45,18 @@ exports.sendEmail = {
 	},
 
 	handler: async (request, h) => {
-
+		console.log(request.payload);
 		const payload = request.payload;
-		const name  = await sanitizer.name(payload.name);
-		const email = await sanitizer.email(payload.email);
+		const name  = payload.name;
+		console.log(name);
+		const email = payload.email;
+		console.log(email);
 
 		if(!name || !email)  throw new Error("Invalid name or email");
 
 		const response = await sendEmail(name, email);
-        console.log("sendEmail attempt:", email, response.success, new Date());
-		
+		console.log("sendEmail attempt:", email, response.success, new Date());
+
 		if(response.success === "OK") {
 			return h.response(response.success).code(200);
 		}
@@ -113,10 +115,11 @@ const sendEmail = async (name, email) => {
 	AWS.config.update({region: "us-east-1"});
 
 	const isAlreadySubscribed = await subscriber.isAlreadySubscribed(email);
-	
+	console.log("isAlreadySubscribed", isAlreadySubscribed);
 	if(isAlreadySubscribed) return { success: false, message: `${email} is already a subscriber.` };
 
 	const token = await subscriber.registerIntent(email);
+	console.log("token", token);
 
 	const params = {
 		Destination: {
