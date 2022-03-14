@@ -7,13 +7,24 @@ const AWS = require("aws-sdk");
 const subscriber = require("./middleware/subscriber");
 const sanitizer  = require("./middleware/sanitizer");
 
+exports.health = {
+	cors: {
+		origin: ["*"]
+	},
+
+	handler: (request, h) => {
+		console.log("Fluente API running");
+		return "Fluente API running";
+	}
+}
+
 exports.checkEmail = {
 	cors: {
 		origin: ["*"]
 	},
-  
+ 
 	handler: async (request, h) => {
-
+		console.log("Chega aqui");
 		const payload = request.payload;
 		const email = await sanitizer.email(payload.email);
 
@@ -26,16 +37,6 @@ exports.checkEmail = {
 			return h.response(response.data).code(200);
 		}
 
-	}
-}
-
-exports.teste = {
-	cors: {
-		origin: ["*"]
-	},
-
-	handler: (request, h) => {
-		return "API Fluente";
 	}
 }
 
