@@ -24,7 +24,6 @@ exports.checkEmail = {
 	},
  
 	handler: async (request, h) => {
-		console.log("Chega aqui");
 		const payload = request.payload;
 		const email = await sanitizer.email(payload.email);
 
@@ -89,8 +88,6 @@ const verifyEmail = async (email) => {
 		"x-rapidapi-host": process.env.CHECKEMAIL_URL,
 		"x-rapidapi-key": process.env.CHECKEMAIL_KEY
 	}
-
-	console.log("Teste verifyEmail");
 
 	const promise = new Promise(resolve => {
 
