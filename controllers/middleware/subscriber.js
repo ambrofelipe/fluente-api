@@ -1,39 +1,40 @@
 "use strict";
 
-const axios = require("axios");
 const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require("uuid");
 const db = require("../helpers/database");
+
+const contactList = "CTA";
+AWS.config.update({region: "us-east-1"});
 
 module.exports = {
 
 	isAlreadySubscribed: async (email) => {
 
 		/**
-		 * Check SES List for email address
+		 * Calls the AWS-SDK method getContact
+		 * Returns a contact from a contact list.
 		 */
 
-		const sesEndpoint = "email.us-east-1.amazonaws.com";
-		const contactListName = "CTA";
-
-		AWS.config.update({region: "us-east-1"});
-
 		const sesv2 = new AWS.SESV2();
-		const params = {};
 
-		sesv2.getAccount(params, (err, data) => {
+		const params = {
+			ContactListName: contactList,
+			EmailAddress: email
+		};
+
+		sesv2.getContact(params, (err, data) => {
 			if(err) console.error(err, err.stack);
-			else    console.log(data);
+			else    return data;
 		});
-
 
 	},
 
 	registerIntent: async (email) => {
 
 		/**
-		 * Insert row to mysql table
-		 * Return token
+		 * Creates token and inserts row into mysql table
+		 * Returns the token
 		 */
 
 		const token = uuidv4();
@@ -45,6 +46,45 @@ module.exports = {
 
 				resolve(token);
 			});
+		});
+	},
+
+	sendEmail: async (name, email, token) => {
+
+		/**
+		 * Calls the AWS-SDK method sendEmail
+		 * Returns a response object.
+		 */
+
+		const sesv2 = new AWS.SESV2();
+
+		const params = {
+			Content: {
+				Template: {
+					TemplateName: 'CTA',
+					TemplateData: `{ "name": "${name}", "token": "${token}" }`
+				}
+			},
+			Destination: {
+				ToAddresses: [ email ]
+			},
+			EmailTags: [
+				{
+					Name: "new_subscriber", 
+					Value: `${token}` 
+				},
+			],
+			FromEmailAddress: 'hello@fluente.me',
+			FromEmailAddressIdentityArn: 'arn:aws:ses:us-east-1:013663099253:identity/fluente.me',
+			ListManagementOptions: {
+				ContactListName: 'CTA',
+				TopicName: 'Fun'
+			},
+		};
+
+		sesv2.sendEmail(params, function(err, data) {
+			if (err) console.error(err, err.stack);
+			else     return data;
 		});
 	},
 

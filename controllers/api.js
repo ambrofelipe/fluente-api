@@ -2,8 +2,6 @@
 const axios = require("axios");
 const env   = require("dotenv").config();
 
-const AWS = require("aws-sdk");
-
 const subscriber = require("./middleware/subscriber");
 const sanitizer  = require("./middleware/sanitizer");
 
@@ -45,12 +43,9 @@ exports.sendEmail = {
 	},
 
 	handler: async (request, h) => {
-		console.log(request.payload);
 		const payload = request.payload;
 		const name  = payload.name;
-		console.log(name);
 		const email = payload.email;
-		console.log(email);
 
 		if(!name || !email)  throw new Error("Invalid name or email");
 
@@ -112,36 +107,25 @@ const verifyEmail = async (email) => {
 
 const sendEmail = async (name, email) => {
 
-	AWS.config.update({region: "us-east-1"});
-
 	const isAlreadySubscribed = await subscriber.isAlreadySubscribed(email);
+
 	console.log("isAlreadySubscribed", isAlreadySubscribed);
+
 	if(isAlreadySubscribed) return { success: false, message: `${email} is already a subscriber.` };
 
 	const token = await subscriber.registerIntent(email);
+
 	console.log("token", token);
 
-	const params = {
-		Destination: {
-			CcAddresses: [],
-			ToAddresses: [ email ],
-		},
-		Source: "hello@fluente.me",
-		Template: "CTA",
-		TemplateData: `{ "name": "${name}", "token": "${token}" }`,
-	};
+	if(!token) return { success: false, message: `Failed to register intent and create token.` }
 
-	return new Promise(resolve => {
-		new AWS.SES({apiVersion: '2010-12-01'})
-			.sendTemplatedEmail(params)
-			.promise()
-			.then(data => {
-				if(data.MessageId !== undefined) resolve({ success: "OK" });
-			})
-			.catch(err => {
-				console.error(err, err.stack);
-			});
-	});
+	const response = await subscriber.sendEmail(name, email, token);
+
+	console.log("email", response);
+
+	if(!response) return { success: false, message: `Failed to send email.` }
+
+	return { success: true, message: `Email sent.` }
 }
 
 const verifyToken = async (token) => {
