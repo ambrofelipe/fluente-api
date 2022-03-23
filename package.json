@@ -10,6 +10,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@hapi/hapi": "^20.2.1",
+		"@hapi/hoek": "^9.2.1",
 		"@hapi/inert": "^6.0.5",
 		"aws-sdk": "^2.1092.0",
 		"axios": "^0.26.1",

@@ -1,6 +1,7 @@
 "use strict";
 
-let Joi = require("joi");
+const Hoek = require("@hapi/hoek");
+const Joi  = require("joi");
 
 module.exports = {
 
@@ -17,7 +18,7 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return res.name;
+		return Hoek.escapeHtml(res.name);
 	},
 
 	email: async (address) => {
@@ -34,7 +35,7 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return res.email;
+		return Hoek.escapeHtml(res.email);
 	},
 
 	token: async (value) => {
@@ -50,7 +51,7 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return res.token;
+		return Hoek.escapeHtml(res.token);
 	}
 
 

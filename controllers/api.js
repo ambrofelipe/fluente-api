@@ -95,7 +95,7 @@ exports.subscribe = {
 	},
 
 	handler: async (request, h) => {
-		const payload = request.payload;
+		const payload = request.query;
 		const token  = await sanitizer.token(payload.token);
 
 		if(!token)  return h.response("Invalid token").code(400);
