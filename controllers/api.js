@@ -79,11 +79,11 @@ exports.sendEmail = {
 		console.log("sendEmail attempt:", email, response, new Date());
 
 		if(response.status === "success") {
-			return h.response(response.data.title).code(200);
+			return h.response(response).code(200);
 		} else if(response.status === "fail") {
-			return h.response(response.data.title).code(400);
+			return h.response(response).code(400);
 		} else {
-			return h.response(response.message).code(500);
+			return h.response(response).code(500);
 		}
 		
 	}
@@ -204,7 +204,7 @@ const sendEmail = async (name, email) => {
 	const unsubscribe = await subscriber.unsubscribe(email);
 	if(!unsubscribe) return { status: "fail", message: `Failed to save contact ${email}.` };
 
-	return { status: "success", data: { title: `Email sent.`, name: name, email: email } };
+	return { status: "success", data: { title: `Eba, ${name}!`, message: `Enviamos seu guia e cupom de desconto para ${email}.`, name: name, email: email } };
 }
 
 const subscribeContact = async (token) => {
