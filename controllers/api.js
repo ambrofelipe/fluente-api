@@ -25,37 +25,17 @@ exports.checkEmail = {
 		const payload = request.payload;
 		const email = await sanitizer.email(payload.email);
 
-		if(!email) throw new Error("Invalid email");
+		if(!email) return h.response("Invalid email").code(400);
 
-		const response = await verifyEmail(email);
+		const response = await checkEmail(email);
         console.log("checkEmail attempt:", email, response.data)
 
 		if (response.status === 200) {
 			return h.response(response.data).code(200);
+		} else {
+			return h.response(response.message).code(500);
 		}
 
-	}
-}
-
-exports.sendEmail = {
-	cors: {
-		origin: ['*']
-	},
-
-	handler: async (request, h) => {
-		const payload = request.payload;
-		const name  = payload.name;
-		const email = payload.email;
-
-		if(!name || !email)  throw new Error("Invalid name or email");
-
-		const response = await sendEmail(name, email);
-		console.log("sendEmail attempt:", email, response.success, new Date());
-
-		if(response.success === "OK") {
-			return h.response(response.success).code(200);
-		}
-		
 	}
 }
 
@@ -73,59 +53,117 @@ exports.recaptcha = {
 		const response = await verifyToken(token);
         console.log("recaptcha attempt:", token, response.data);
 
-		if(response.data.success === true) {
-			return h.response(response.data);
+		if(response.status === "success") {
+			return h.response(response.data).code(200);
+		} else {
+			return h.response(response.message).code(500);
 		}
 
 	}
 }
 
-const verifyEmail = async (email) => {
+exports.sendEmail = {
+	cors: {
+		origin: ['*']
+	},
+
+	handler: async (request, h) => {
+		const payload = request.payload;
+		const name  = await sanitizer.name(payload.name);
+		const email = await sanitizer.email(payload.email);
+
+		if(!name)  return h.response("Invalid name").code(400);
+		if(!email) return h.response("Invalid email").code(400);
+
+		const response = await sendEmail(name, email);
+		console.log("sendEmail attempt:", email, response, new Date());
+
+		if(response.status === "success") {
+			return h.response(response.data.title).code(200);
+		} else if(response.status === "fail") {
+			return h.response(response.data.title).code(400);
+		} else {
+			return h.response(response.message).code(500);
+		}
+		
+	}
+}
+
+exports.subscribe = {
+	cors: {
+		origin: ['*']
+	},
+
+	handler: async (request, h) => {
+		const payload = request.payload;
+		const token  = await sanitizer.token(payload.token);
+
+		if(!token)  return h.response("Invalid token").code(400);
+
+		const response = await subscribeContact(token);
+		console.log("subscribe attempt:", token, response, new Date());
+
+		if(response.status === "success") {
+			return h.response(response.data.title).code(200);
+		} else if(response.status === "fail") {
+			return h.response(response.data.title).code(400);
+		} else {
+			return h.response(response.message).code(404);
+		}
+		
+	}
+}
+
+exports.deleteContact = {
+	cors: {
+		origin: ['*']
+	},
+
+	handler: async (request, h) => {
+		const payload = request.payload;
+		const name  = await sanitizer.name(payload.name);
+		const email = await sanitizer.email(payload.email);
+
+		if(!name)  return h.response("Invalid name").code(400);
+		if(!email) return h.response("Invalid email").code(400);
+
+		const response = await deleteContact(name, email);
+		console.log("deleteContact attempt:", email, response, new Date());
+
+		if(response.status === "success") {
+			return h.response(response.data.title).code(200);
+		} else if(response.status === "fail") {
+			return h.response(response.data.title).code(400);
+		} else {
+			return h.response(response.message).code(404);
+		}
+		
+	}
+}
+
+const checkEmail = async (email) => {
 	const checkEmailHeaders = {
 		"x-rapidapi-host": process.env.CHECKEMAIL_URL,
 		"x-rapidapi-key": process.env.CHECKEMAIL_KEY
 	}
 
-	const promise = new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 
 		axios
 			.get('https://' + process.env.CHECKEMAIL_URL + '?domain=' + email, { headers: checkEmailHeaders })
 			.then(res => {
 				console.info(`statusCode: ${res.status}`);
-				resolve(res);
+				return resolve(res);
 			})
 			.catch(error => {
-				console.error(error)
+				console.error(error);
+				return reject(error);
 			});
 	})
 	.catch(error => {
-		console.log(error);
+		console.error(error);
+		return { status: "error", message: error };
 	});
-
-	return promise;
-}
-
-const sendEmail = async (name, email) => {
-
-	const isAlreadySubscribed = await subscriber.isAlreadySubscribed(email);
-
-	console.log("isAlreadySubscribed", isAlreadySubscribed);
-
-	if(isAlreadySubscribed) return { success: false, message: `${email} is already a subscriber.` };
-
-	const token = await subscriber.registerIntent(email);
-
-	console.log("token", token);
-
-	if(!token) return { success: false, message: `Failed to register intent and create token.` }
-
-	const response = await subscriber.sendEmail(name, email, token);
-
-	console.log("email", response);
-
-	if(!response) return { success: false, message: `Failed to send email.` }
-
-	return { success: true, message: `Email sent.` }
 }
 
 const verifyToken = async (token) => {
@@ -140,10 +178,46 @@ const verifyToken = async (token) => {
 			)
 			.then(res => {
 				console.info(`statusCode: ${res.status}`);
-				resolve({ data: res.data });
+				return resolve({ status: "success", data: res.data });
 			})
 			.catch(error => {
 				console.error(error);
+				return { status: "error", message: error };
 			});
 	});
+}
+
+const sendEmail = async (name, email) => {
+
+	const isAlreadySubscribed = await subscriber.isAlreadySubscribed(email);
+	if(isAlreadySubscribed) return { status: "fail", data: { title: `${email} is already subscribed.` } };
+
+	const newContact = await subscriber.create(email);
+	if(!newContact) return { status: "error", message: `Failed to create contact with email ${email}.` };
+
+	const token = await subscriber.registerIntent(email);
+	if(!token) return { status: "error", message: `Failed to register intent and create token for contact ${email}.` };
+
+	const response = await subscriber.sendEmail(name, email, token);
+	if(!response) return { status: "error", message: `Failed to send email to contact ${email}.` };
+
+	const unsubscribe = await subscriber.unsubscribe(email);
+	if(!unsubscribe) return { status: "fail", message: `Failed to save contact ${email}.` };
+
+	return { status: "success", data: { title: `Email sent.`, name: name, email: email } };
+}
+
+const subscribeContact = async (token) => {
+	const response = await subscriber.subscribe(token);
+	if(!response) return { status: "error", message: `Failed to subscribe contact with token ${token}` };
+
+	return { status: "success", data: { title: "User subscribed." } };
+}
+
+const deleteContact = async(name, email) => {
+
+	const deleted = await subscriber.delete(email);
+	if(deleted.statusCode === 404) return { status: "error", message: "Contact is not in the list." };
+
+	return { status: "success", data: { title: "Contact deleted.", name: name, email: email } };
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-let Joi    = require("joi");
+let Joi = require("joi");
 
 module.exports = {
 
@@ -8,7 +8,6 @@ module.exports = {
 
 		const schema = Joi.object({
 			name: Joi.string()
-					.alphanum()
 					.min(1)
 					.max(255)
 					.required()
@@ -36,6 +35,22 @@ module.exports = {
 		if(res.error !== undefined) throw new Error(res.error);
 
 		return res.email;
+	},
+
+	token: async (value) => {
+
+		const schema = Joi.object({
+			token: Joi.string()
+					.min(16)
+					.max(64)
+					.required()
+		});
+
+		const res = await schema.validateAsync({ token: value });
+
+		if(res.error !== undefined) throw new Error(res.error);
+
+		return res.token;
 	}
 
 
