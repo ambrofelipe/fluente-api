@@ -190,7 +190,7 @@ const verifyToken = async (token) => {
 const sendEmail = async (name, email) => {
 
 	const isAlreadySubscribed = await subscriber.isAlreadySubscribed(email);
-	if(isAlreadySubscribed) return { status: "fail", data: { title: `${email} is already subscribed.` } };
+	if(isAlreadySubscribed) return { status: "fail", data: { title: `Oops! Desculpa, ${name}.`, message: `O ${email} já está inscrito.` } };
 
 	const newContact = await subscriber.create(email);
 	if(!newContact) return { status: "error", message: `Failed to create contact with email ${email}.` };
@@ -202,7 +202,7 @@ const sendEmail = async (name, email) => {
 	if(!response) return { status: "error", message: `Failed to send email to contact ${email}.` };
 
 	const unsubscribe = await subscriber.unsubscribe(email);
-	if(!unsubscribe) return { status: "fail", message: `Failed to save contact ${email}.` };
+	if(!unsubscribe) return { status: "fail", data: { title: `Oops! Desculpa, ${name}.`, message: `Não conseguimos salvar o ${email}.` } };
 
 	return { status: "success", data: { title: `Eba, ${name}!`, message: `Enviamos seu guia e cupom de desconto para ${email}.`, name: name, email: email } };
 }

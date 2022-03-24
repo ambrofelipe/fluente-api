@@ -31,7 +31,7 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:8000/subscribe?token=3a94e2de-596a-45e3-9cce-8286d55d1fc0
+GET http://localhost:8000/subscribe?token=4ef5efc5-8050-4b0c-bb75-37f0521f2e09
 content-type: application/json
 
 ###
