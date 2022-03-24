@@ -35,7 +35,7 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return Hoek.escapeHtml(res.email);
+		return Hoek.escapeHtml(res.email).replace(/&#x40;/, "@");
 	},
 
 	token: async (value) => {
