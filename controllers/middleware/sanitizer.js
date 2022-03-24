@@ -1,6 +1,7 @@
 "use strict";
 
-let Joi    = require("joi");
+const Hoek = require("@hapi/hoek");
+const Joi  = require("joi");
 
 module.exports = {
 
@@ -8,7 +9,6 @@ module.exports = {
 
 		const schema = Joi.object({
 			name: Joi.string()
-					.alphanum()
 					.min(1)
 					.max(255)
 					.required()
@@ -18,7 +18,7 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return res.name;
+		return Hoek.escapeHtml(res.name);
 	},
 
 	email: async (address) => {
@@ -35,7 +35,23 @@ module.exports = {
 
 		if(res.error !== undefined) throw new Error(res.error);
 
-		return res.email;
+		return Hoek.escapeHtml(res.email).replace(/&#x40;/, "@");
+	},
+
+	token: async (value) => {
+
+		const schema = Joi.object({
+			token: Joi.string()
+					.min(16)
+					.max(64)
+					.required()
+		});
+
+		const res = await schema.validateAsync({ token: value });
+
+		if(res.error !== undefined) throw new Error(res.error);
+
+		return Hoek.escapeHtml(res.token);
 	}
 
 

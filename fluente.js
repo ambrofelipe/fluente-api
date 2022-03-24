@@ -1,7 +1,7 @@
 'use strict';
 
-const Hapi = require('hapi');
-const Inert = require('inert');
+const Hapi = require('@hapi/hapi');
+const Inert = require('@hapi/inert');
 
 // CUSTOM CONTROLLERS
 const Routes = require('./routes');
@@ -12,7 +12,7 @@ const server = Hapi.server({
 	host: 'localhost',
 	routes: {
 		cors: {
-			origin: ['fluente.me', 'fluente.local'],
+			origin: ['*'],
 			credentials: true
 		},
 		state: {

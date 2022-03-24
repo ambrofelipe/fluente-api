@@ -1,3 +1,8 @@
+GET http://localhost:8000/health
+content-type: application/json
+
+###
+
 POST http://localhost:8000/checkEmail
 content-type: application/json
 
@@ -12,7 +17,7 @@ content-type: application/json
 
 {
 	"name": "Felipe",
-	"email": "felipe@fluente.me"
+	"email": "ambrofelipe@gmail.com"
 }
 
 ###
@@ -22,4 +27,19 @@ content-type: application/json
 
 {
 	"token": "03AGdBq25sA_DsaIm8TO2Vh_gmKRq1Vt7rTsw6lfsCqZYT36TLnYE3N0PgcasQSDxqL3TOAod_Hq31rn-xxubcE_IhO7XwQ6rAsp1Zxp-mnOk98l_W42mzsVQ7PRN7bAxHvB7kebWXTZfxfrluJWrR77yS7aEHNV0ORwQX295xmOslzJGFmdV5c_NX04HmqZaPGn3wJstx9N6fLDmH52uyYMg8wy_NiAsxjyqOkGHG7GRfUPUpeTJ02VbBEN4n0ZCEuHrBadlIE_WH0t9y7uiXbraNrZm2s6O4imCFo2WOxMH1OXNXsHTQ3P3_TZkilj8fDHa-3pMuRlabEplNu-B6U1BB9QZI5sUTpeydlCuq-8EzvMTNopPC4VcBxJcF-tfvJMw8UNCM_r7TDPGAG12hw3EO3yrpVpp_ivEWimVB7JI9OaQ8rV4uZsaPq13eau64EXcmwwta1XRlriCgMb41KQVxj0uSQoVWxDl4NAuGFsvr-he9FAN2AXHQXMGQF7EI9fgpntxNxv0PQwfinznkyNB_XzDUjqEL6g"
+}
+
+###
+
+GET http://localhost:8000/subscribe?token=4ef5efc5-8050-4b0c-bb75-37f0521f2e09
+content-type: application/json
+
+###
+
+DELETE http://localhost:8000/deleteContact
+content-type: application/json
+
+{
+	"name": "Felipe",
+	"email": "ambrofelipe@gmail.com"
 }
