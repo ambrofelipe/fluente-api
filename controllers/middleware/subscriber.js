@@ -186,7 +186,7 @@ module.exports = {
 		 * Returns a response object.
 		 */
 
-		const select = `SELECT email, active FROM fluente_doubleoptin WHERE token = ${db.escape(token)} LIMIT 1`;
+		const select = `SELECT email, active FROM fluente_doubleoptin WHERE token = ${db.escape(token)} AND created >= NOW() - INTERVAL 1 DAY LIMIT 1`;
 
 		const user = await new Promise(resolve => {
 			db.query(select, (err, result) => {

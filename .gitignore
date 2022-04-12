@@ -11,9 +11,6 @@ dist/
 # Keys & secrets
 *.env
 
-# DB dumps
-*.sql
-
 # Compiled Java class files
 *.class
 

@@ -104,11 +104,11 @@ exports.subscribe = {
 		console.log("subscribe attempt:", token, response, new Date());
 
 		if(response.status === "success") {
-			return h.response(response.data.title).code(200);
+			return h.response(response).code(200);
 		} else if(response.status === "fail") {
-			return h.response(response.data.title).code(400);
+			return h.response(response).code(400);
 		} else {
-			return h.response(response.message).code(404);
+			return h.response(response).code(500);
 		}
 		
 	}
@@ -209,9 +209,9 @@ const sendEmail = async (name, email) => {
 
 const subscribeContact = async (token) => {
 	const response = await subscriber.subscribe(token);
-	if(!response) return { status: "error", message: `Failed to subscribe contact with token ${token}` };
+	if(!response) return { status: "fail", data: { title: "Oops! Houve um erro ao completar sua subscrição.", message: "Manda uma mensagem no Instagram que investigaremos o problema." } };
 
-	return { status: "success", data: { title: "User subscribed." } };
+	return { status: "success", data: { title: "Parabéns! Sua subscrição está feita.", message: "Agora é só aproveitar o conteúdo." } };
 }
 
 const deleteContact = async(name, email) => {
