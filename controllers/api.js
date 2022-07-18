@@ -204,7 +204,7 @@ const sendEmail = async (name, email) => {
 	const unsubscribe = await subscriber.unsubscribe(email);
 	if(!unsubscribe) return { status: "fail", data: { title: `Oops! Desculpa, ${name}.`, message: `Não conseguimos salvar o ${email}.` } };
 
-	return { status: "success", data: { title: `Eba, ${name}!`, message: `Enviamos seu guia e cupom de desconto para ${email}.`, name: name, email: email } };
+	return { status: "success", data: { title: `Eba, ${name}!`, message: `Enviamos seu guia para ${email}.`, name: name, email: email } };
 }
 
 const subscribeContact = async (token) => {
